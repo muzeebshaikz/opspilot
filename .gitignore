@@ -1,0 +1,20 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+data/qdrant/
+data/opspilot.db
+data/generated/
+data/eval/
+artifacts/
+.pytest_cache/
+node_modules/
+.next/
+.tmp/
+
+# build artifacts
+*.tsbuildinfo
+frontend/out/
+.DS_Store
+*.log
+.tmp*.json

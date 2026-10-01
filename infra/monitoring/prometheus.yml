@@ -1,0 +1,21 @@
+# NOT RUN LOCALLY -- no Docker on the development machine.
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    service: opspilot
+
+rule_files:
+  - alerts.yml
+
+scrape_configs:
+  - job_name: opspilot-backend
+    metrics_path: /metrics/prometheus
+    static_configs:
+      - targets: ["backend:8000"]
+        labels:
+          component: backend
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]

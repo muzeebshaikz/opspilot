@@ -1,0 +1,44 @@
+[project]
+name = "opspilot-ai"
+version = "0.1.0"
+description = "Enterprise IT operations copilot: hybrid RAG + typed tools over MCP"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = [".venv", "frontend", "data", "artifacts"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # import sorting
+    "UP",   # pyupgrade
+    "B",    # bugbear
+    "SIM",  # simplify
+    "C4",   # comprehensions
+    "RUF",  # ruff-specific
+]
+ignore = [
+    "E501",    # line length handled by the formatter, not the linter
+    "B008",    # FastAPI Depends()/Header() in defaults is the framework idiom
+    "RUF001",  # ambiguous unicode in prose/docstrings is intentional
+    "RUF002",
+    "RUF003",
+    "SIM108",  # ternaries are not always clearer than if/else
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Scripts legitimately mutate sys.path before importing the package.
+"scripts/*.py" = ["E402"]
+# Tests assert on internals and re-import inside functions deliberately.
+"tests/*.py" = ["E402", "F401"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["opspilot"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"

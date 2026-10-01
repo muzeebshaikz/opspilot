@@ -1,0 +1,32 @@
+# OpenTelemetry Collector. NOT RUN LOCALLY.
+# The backend exports OTLP/HTTP when OPSPILOT_OTEL_ENDPOINT is set; with no
+# endpoint configured, spans are created and dropped, which keeps the
+# instrumentation exercised without requiring a collector.
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+processors:
+  batch:
+    timeout: 5s
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 75
+    spike_limit_percentage: 15
+
+exporters:
+  debug:
+    verbosity: normal
+  otlphttp/tempo:
+    endpoint: http://tempo:4318
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug, otlphttp/tempo]

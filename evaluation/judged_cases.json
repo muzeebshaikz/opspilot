@@ -1,0 +1,268 @@
+[
+  {
+    "query_id": "Q-D3AA58B08E",
+    "difficulty": "V",
+    "question": "what is the current supported fix for assuming a cross-account aws role",
+    "answerable": true,
+    "abstained": false,
+    "citations": 6,
+    "answer": "The supported remediation is to:\n\n1. **Confirm the principal appears in the trust policy**.  \n2. **Supply the external ID when assuming the role**.  \n3. **Verify the assumption succeeded with** `aws sts get-caller-identity`【1†L1-L3】【2†L1-L3】",
+    "evidence_preview": [
+      "# Assuming a Cross-Account AWS Role\n\n## Summary\n\nThe CLI reports it is not authorised to perform the STS action. This document describes the supported remediation for AWS in the Platform estate.\n\n## Background\n\nAWS is operated by the Platform function and is in scope for all Acme Technologies staff using Windows, macOS endpoints. The behaviour described here has been observed across multiple hardw",
+      "# Runbook: Assuming a Cross-Account AWS Role\n\n## Preconditions\n\n- Requester identity verified\n- Device enrolled in management\n- AWS installed at a supported version\n\n## Procedure\n\n1. Confirm the principal appears in the trust policy.\n2. Supply the external ID when assuming.\n3. Verify with `aws sts get-caller-identity`.\n\n## Verification\n\nConfirm the symptom is cleared: the cli reports it is not aut",
+      "# FAQ: Assuming a Cross-Account AWS Role\n\n## Question\n\nAws assume role access denied across accounts?\n\n## Answer\n\nConfirm the principal appears in the trust policy."
+    ],
+    "judge": {
+      "faithfulness": 1.0,
+      "answer_relevance": 1.0,
+      "context_precision": 1.0
+    }
+  },
+  {
+    "query_id": "Q-22BDA5F48A",
+    "difficulty": "S",
+    "question": "what are the rules for making up a new sign in secret",
+    "answerable": true,
+    "abstained": true,
+    "citations": 0,
+    "answer": "I could not find enough evidence in the IT knowledge base to answer that reliably, so I would rather not guess. You can rephrase the question, or I can raise a ticket so a human agent picks it up.",
+    "evidence_preview": [
+      "## Symptoms\n\nThe client repeatedly prompts for credentials after a recent directory password rotation. Affected users typically observe this on Windows, macOS. Reported informally as: keeps asking; password; over and over; won't accept; login loop.\n\n## Root Cause\n\nA stale Kerberos ticket cached in the credential vault is replayed before the new secret is read.\n\nThe relevant subsystems are: Kerbero",
+      "## Symptoms\n\nA newly provisioned device has no VPN profile and cannot reach internal resources. Affected users typically observe this on Windows, macOS. Reported informally as: set up; install; new laptop; get connected; first time.\n\n## Root Cause\n\nThe device certificate has not been enrolled with the corporate PKI.\n\nThe relevant subsystems are: enrollment, PKI, device certificate, profile provisi",
+      "# Installing and Registering the Corporate VPN Client\n\n## Summary\n\nA newly provisioned device has no VPN profile and cannot reach internal resources. This document describes the supported remediation for Corporate VPN in the Networking estate.\n\n## Background\n\nCorporate VPN is operated by the Networking function and is in scope for all Acme Technologies staff using Windows, macOS endpoints. The beh"
+    ],
+    "judge": {
+      "faithfulness": null,
+      "answer_relevance": 0.0,
+      "context_precision": 0.0
+    }
+  },
+  {
+    "query_id": "Q-C60A6B2655",
+    "difficulty": "S",
+    "question": "when can I get a newer computer, mine is getting on a bit",
+    "answerable": true,
+    "abstained": true,
+    "citations": 0,
+    "answer": "I could not find enough evidence in the IT knowledge base to answer that reliably, so I would rather not guess. You can rephrase the question, or I can raise a ticket so a human agent picks it up.",
+    "evidence_preview": [
+      "## Symptoms\n\nNew joiners need a deterministic sequence of setup steps. Affected users typically observe this on Windows, macOS. Reported informally as: first day; new starter; getting started; what do I do.\n\n## Root Cause\n\nProvisioning is asynchronous, so ordering matters.\n\nThe relevant subsystems are: provisioning sequence, entitlement propagation, identity seed, asset assignment. When the condit",
+      "# Day One IT Setup Checklist for New Joiners\n\n## Summary\n\nNew joiners need a deterministic sequence of setup steps. This document describes the supported remediation for Acme Onboarding in the People Operations estate.\n\n## Background\n\nAcme Onboarding is operated by the People Operations function and is in scope for all Acme Technologies staff using Windows, macOS endpoints. The behaviour described",
+      "## Symptoms\n\nA newly provisioned device has no VPN profile and cannot reach internal resources. Affected users typically observe this on Windows, macOS. Reported informally as: set up; install; new laptop; get connected; first time.\n\n## Root Cause\n\nThe device certificate has not been enrolled with the corporate PKI.\n\nThe relevant subsystems are: enrollment, PKI, device certificate, profile provisi"
+    ],
+    "judge": {
+      "faithfulness": null,
+      "answer_relevance": 0.0,
+      "context_precision": 0.0
+    }
+  },
+  {
+    "query_id": "Q-E57217066C",
+    "difficulty": "V",
+    "question": "what is the current supported fix for git lfs quota and large file handling",
+    "answerable": true,
+    "abstained": false,
+    "citations": 6,
+    "answer": "The current supported remediation is:\n\n1. Verify the LFS‑tracked file patterns with `git lfs track`.  \n2. Migrate the repository history to remove or rewrite the large files using `git lfs migrate import`.  \n3. Request a bandwidth‑quota uplift from the appropriate team.\n\nThese steps are listed in the Windows, macOS, and generic Git LFS quota articles as the recommended resolution【3†L9-L12】【4†L9-L12】【6†L19-L23】.",
+    "evidence_preview": [
+      "# Git LFS Quota and Large File Handling\n\n## Summary\n\nPushes containing binary assets are rejected at the pre-receive hook. This document describes the supported remediation for Git in the Engineering estate.\n\n## Background\n\nGit is operated by the Engineering function and is in scope for all Acme Technologies staff using Windows, macOS endpoints. The behaviour described here has been observed acros",
+      "# FAQ: Git LFS Quota and Large File Handling\n\n## Question\n\nGit lfs push rejected due to quota?\n\n## Answer\n\nVerify tracked patterns with `git lfs track`.",
+      "# Git LFS Quota and Large File Handling on Windows\n\n## Applies To\n\nWindows endpoints running Git. This article does not apply to other operating systems; see the corresponding Windows-specific guidance only.\n\n## Symptoms\n\nPushes containing binary assets are rejected at the pre-receive hook. On Windows the condition additionally surfaces in the platform log with a pre-receive hook warning.\n\n## Reso"
+    ],
+    "judge": {
+      "faithfulness": 1.0,
+      "answer_relevance": 1.0,
+      "context_precision": 1.0
+    }
+  },
+  {
+    "query_id": "Q-F7C61BFD86",
+    "difficulty": "P",
+    "question": "Docker Desktop will not start after a Windows update on Windows",
+    "answerable": true,
+    "abstained": false,
+    "citations": 1,
+    "answer": "**Resolution – Docker Desktop won’t start after a Windows update (Windows endpoints)**  \n\n1. **Re‑enable the Virtual Machine Platform**  \n   * Open **Windows Features** (search “Turn Windows features on or off”).  \n   * Check **Virtual Machine Platform** and click **OK**.  \n   * Let Windows apply the change and reboot if prompted.\n\n2. **Reset the Docker VM disk**  \n   * Open Docker Desktop → **Settings** → **Troubleshoot**.  \n   * Click **Reset Docker Desktop** → **Reset VM disk** (or “Reset to factory defaults” if the specific option isn’t shown).  \n\n3. **Restart Docker Desktop and verify**  \n   * Launch Docker Desktop again.  \n   * Open an elevated PowerShell window and run:  \n\n   ```powershell\n   docker info\n   ```  \n\n   * Confirm the daemon reaches a ready state and the tray icon turns green.\n\n4. **Confirm persistence**  \n   * After the reboot, re‑run `docker info` to ensure the Virtual Machine Platform setting remained enabled (policy refresh can revert changes).  \n\n**Source**: Steps are taken from the current Windows‑specific guidance [3].",
+    "evidence_preview": [
+      "# Docker Desktop Fails to Start After a Windows Update\n\n## Summary\n\nThe daemon never reaches a ready state and the engine tray icon stays red. This document describes the supported remediation for Docker Desktop in the Engineering estate.\n\n## Background\n\nDocker Desktop is operated by the Engineering function and is in scope for all Acme Technologies staff using Windows, macOS, Linux endpoints. The",
+      "# FAQ: Docker Desktop Fails to Start After a Windows Update\n\n## Question\n\nDocker desktop will not start after a windows update?\n\n## Answer\n\nRe-enable Virtual Machine Platform in Windows Features.",
+      "# Docker Desktop Fails to Start After a Windows Update on Windows\n\n## Applies To\n\nWindows endpoints running Docker Desktop. This article does not apply to other operating systems; see the corresponding Windows-specific guidance only.\n\n## Symptoms\n\nThe daemon never reaches a ready state and the engine tray icon stays red. On Windows the condition additionally surfaces in the platform log with a hyp"
+    ],
+    "judge": {
+      "faithfulness": 1.0,
+      "answer_relevance": 1.0,
+      "context_precision": 0.5
+    }
+  },
+  {
+    "query_id": "Q-18CAC629BD",
+    "difficulty": "X",
+    "question": "what is the procedure for Oracle Forms migration runbook",
+    "answerable": false,
+    "abstained": true,
+    "citations": 0,
+    "answer": "I could not find enough evidence in the IT knowledge base to answer that reliably, so I would rather not guess. You can rephrase the question, or I can raise a ticket so a human agent picks it up.",
+    "evidence_preview": [
+      "## Resolution\n\n1. Devices are eligible after 36 months.\n2. Out-of-warranty failures are replaced immediately.\n3. Data migration is scheduled with the service desk.\n\n## Configuration Reference\n\n| Setting | Default | Supported range | Notes |\n| --- | --- | --- | --- |\n| `refresh_cycle` | `100` | `50`-`200` | Applies to Acme Endpoint. Changing this requires a service restart. |\n| `warranty_state` | `",
+      "# Laptop Replacement and Hardware Refresh Policy on macOS\n\n## Applies To\n\nmacOS endpoints running Acme Endpoint. This article does not apply to other operating systems; see the corresponding macOS-specific guidance only.\n\n## Symptoms\n\nUsers need to know eligibility and the replacement process. On macOS the condition additionally surfaces in the platform log with a refresh cycle warning.\n\n## Resolu",
+      "# Laptop Replacement and Hardware Refresh Policy on Windows\n\n## Applies To\n\nWindows endpoints running Acme Endpoint. This article does not apply to other operating systems; see the corresponding Windows-specific guidance only.\n\n## Symptoms\n\nUsers need to know eligibility and the replacement process. On Windows the condition additionally surfaces in the platform log with a refresh cycle warning.\n\n#"
+    ],
+    "judge": {
+      "faithfulness": null,
+      "answer_relevance": 1.0,
+      "context_precision": 0.0
+    }
+  },
+  {
+    "query_id": "Q-4EA3533F2B",
+    "difficulty": "B",
+    "question": "internal DNS names not resolving over VPN",
+    "answerable": true,
+    "abstained": true,
+    "citations": 0,
+    "answer": "I could not find enough evidence in the IT knowledge base to answer that reliably, so I would rather not guess. You can rephrase the question, or I can raise a ticket so a human agent picks it up.",
+    "evidence_preview": [
+      "# FAQ: Internal Hostname Resolution Failures\n\n## Question\n\nInternal dns names not resolving over vpn?\n\n## Answer\n\nFlush the resolver cache.",
+      "# Acme DNS Error Code Reference\n\n## Scope\n\nAuthoritative lookup for diagnostic codes emitted by Acme DNS.\n\n## Code Table\n\n| Code | Meaning | Severity | First action |\n| --- | --- | --- | --- |\n| `ERR_DNS_NXDOMAIN` | Internal `.acme.internal` names do not resolve while public names work. | High | Flush the resolver cache. |\n\n## Code ERR_DNS_NXDOMAIN\n\n`ERR_DNS_NXDOMAIN` is emitted by Acme DNS when t",
+      "# Internal Hostname Resolution Failures\n\n## Summary\n\nInternal `.acme.internal` names do not resolve while public names work. This document describes the supported remediation for Acme DNS in the Networking estate.\n\n## Background\n\nAcme DNS is operated by the Networking function and is in scope for all Acme Technologies staff using Windows, macOS endpoints. The behaviour described here has been obse"
+    ],
+    "judge": {
+      "faithfulness": null,
+      "answer_relevance": 0.0,
+      "context_precision": 1.0
+    }
+  },
+  {
+    "query_id": "Q-D3BE34DF0E",
+    "difficulty": "M",
+    "question": "my workload will not stay alive and restarts over and over on the shared platform - and what do I need in place first",
+    "answerable": true,
+    "abstained": true,
+    "citations": 0,
+    "answer": "I could not find enough evidence in the IT knowledge base to answer that reliably, so I would rather not guess. You can rephrase the question, or I can raise a ticket so a human agent picks it up.",
+    "evidence_preview": [
+      "# Diagnosing CrashLoopBackOff on the Shared Cluster\n\n## Summary\n\nA workload restarts continuously shortly after scheduling. This document describes the supported remediation for Acme Kubernetes Platform in the Platform estate.\n\n## Background\n\nAcme Kubernetes Platform is operated by the Platform function and is in scope for all Acme Technologies staff using Linux endpoints. The behaviour described ",
+      "## Symptoms\n\nA workload restarts continuously shortly after scheduling. Affected users typically observe this on Linux. Reported informally as: keeps restarting; crash; won't stay up; dies.\n\n## Root Cause\n\nThe readiness probe targets a port the container never binds, so the kubelet reaps it.\n\nThe relevant subsystems are: readiness probe, kubelet, backoff, liveness, pod spec, reaped. When the condi",
+      "# Acme Kubernetes Platform Error Code Reference\n\n## Scope\n\nAuthoritative lookup for diagnostic codes emitted by Acme Kubernetes Platform.\n\n## Code Table\n\n| Code | Meaning | Severity | First action |\n| --- | --- | --- | --- |\n| `ERR_K8S_CLB` | A workload restarts continuously shortly after scheduling. | High | Inspect with `kubectl describe pod`. |"
+    ],
+    "judge": {
+      "faithfulness": null,
+      "answer_relevance": 0.0,
+      "context_precision": 1.0
+    }
+  },
+  {
+    "query_id": "Q-4CA3024376",
+    "difficulty": "B",
+    "question": "Microsoft 365 apps in reduced functionality mode, licence issue",
+    "answerable": true,
+    "abstained": false,
+    "citations": 3,
+    "answer": "The condition you’re seeing is the standard “reduced‑functionality mode” caused by a licence‑reclamation fault. The supported remediation is:\n\n1. **Sign out of all Office apps** on the affected device.  \n2. **Request a licence reassignment** through the Acme Licence Portal.  \n3. **Verify the licence** by running the check command:  \n\n   ```powershell\n   Get‑AcmeLicence -User <user‑principal‑name>\n   ```  \n\n   (Run the command in an elevated PowerShell session on Windows or with `sudo` in Terminal on macOS.)  \n\nIf the problem persists after these steps, confirm that the licence is still assigned and that no policy refresh has reverted the change.  \n\n**Sources**: [1] FAQ; [3] Windows guidance; [4] Error‑code remediation.",
+    "evidence_preview": [
+      "# FAQ: Microsoft 365 Activation and Licence Assignment\n\n## Question\n\nMicrosoft 365 apps in reduced functionality mode, licence issue?\n\n## Answer\n\nSign out of all Office apps.",
+      "# Microsoft 365 Activation and Licence Assignment on macOS\n\n## Applies To\n\nmacOS endpoints running Microsoft 365. This article does not apply to other operating systems; see the corresponding macOS-specific guidance only.\n\n## Symptoms\n\nOffice applications open in reduced-functionality mode. On macOS the condition additionally surfaces in the platform log with a licence reclamation warning.\n\n## Res",
+      "# Microsoft 365 Activation and Licence Assignment on Windows\n\n## Applies To\n\nWindows endpoints running Microsoft 365. This article does not apply to other operating systems; see the corresponding Windows-specific guidance only.\n\n## Symptoms\n\nOffice applications open in reduced-functionality mode. On Windows the condition additionally surfaces in the platform log with a licence reclamation warning."
+    ],
+    "judge": {
+      "faithfulness": 1.0,
+      "answer_relevance": 1.0,
+      "context_precision": 1.0
+    }
+  },
+  {
+    "query_id": "Q-BEC8EAADFE",
+    "difficulty": "P",
+    "question": "how do I report a suspected security incident on macOS",
+    "answerable": true,
+    "abstained": false,
+    "citations": 1,
+    "answer": "To report a suspected security incident on a macOS device:\n\n1. **Disconnect from the network** – keep the machine powered on.  \n2. **Report the incident within 30 minutes** to the Security Desk.  \n3. **Preserve the device** so it can be captured for forensic analysis.\n\nThese steps are outlined in the macOS‑specific guidance [1].",
+    "evidence_preview": [
+      "# Reporting a Suspected Security Incident on macOS\n\n## Applies To\n\nmacOS endpoints running Acme Security. This article does not apply to other operating systems; see the corresponding macOS-specific guidance only.\n\n## Symptoms\n\nAn employee suspects credential compromise or malware. On macOS the condition additionally surfaces in the platform log with a blast radius warning.\n\n## Resolution\n\n1. Disc",
+      "# FAQ: Reporting a Suspected Security Incident\n\n## Question\n\nHow do i report a suspected security incident?\n\n## Answer\n\nDisconnect from the network but do not power off.",
+      "# Reporting a Suspected Security Incident\n\n## Summary\n\nAn employee suspects credential compromise or malware. This document describes the supported remediation for Acme Security in the Security estate.\n\n## Background\n\nAcme Security is operated by the Security function and is in scope for all Acme Technologies staff using Windows, macOS endpoints. The behaviour described here has been observed acro"
+    ],
+    "judge": {
+      "faithfulness": 1.0,
+      "answer_relevance": 1.0,
+      "context_precision": 0.67
+    }
+  },
+  {
+    "query_id": "Q-BEB072F79C",
+    "difficulty": "P",
+    "question": "privileged access request and break-glass procedure on Windows",
+    "answerable": true,
+    "abstained": false,
+    "citations": 2,
+    "answer": "**Privileged Access Request and Break‑Glass Procedure (Windows)**  \n\n1. **Raise a Just‑In‑Time (JIT) request** – submit a request that includes a clear business justification. [2]  \n2. **Obtain approval** – the entitlement owner must approve the request before any elevation is granted. [2] [3]  \n3. **Access duration** – the elevated entitlement is automatically revoked after **four hours**. [2] [3]  \n\n*Additional notes*  \n\n- Run any required commands from an **elevated PowerShell session**. [2]  \n- Windows enforces its own policy layer on top of Acme Identity; if the platform policy conflicts with the JIT change, the platform policy will win and the change may be reverted on the next policy refresh. Verify that the elevation persists after a reboot. [2]",
+    "evidence_preview": [
+      "# Privileged Access Request and Break-Glass Procedure\n\n## Summary\n\nStaff require elevated entitlements for a bounded window. This document describes the supported remediation for Acme Identity in the Security estate.\n\n## Background\n\nAcme Identity is operated by the Security function and is in scope for all Acme Technologies staff using Windows, macOS endpoints. The behaviour described here has bee",
+      "# Privileged Access Request and Break-Glass Procedure on Windows\n\n## Applies To\n\nWindows endpoints running Acme Identity. This article does not apply to other operating systems; see the corresponding Windows-specific guidance only.\n\n## Symptoms\n\nStaff require elevated entitlements for a bounded window. On Windows the condition additionally surfaces in the platform log with a just-in-time warning.\n",
+      "# Runbook: Privileged Access Request and Break-Glass Procedure\n\n## Preconditions\n\n- Requester identity verified\n- Device enrolled in management\n- Acme Identity installed at a supported version\n\n## Procedure\n\n1. Raise a JIT request with a business justification.\n2. Obtain approval from the entitlement owner.\n3. Access expires automatically after four hours.\n\n## Verification\n\nConfirm the symptom is "
+    ],
+    "judge": {
+      "faithfulness": 1.0,
+      "answer_relevance": 1.0,
+      "context_precision": 0.83
+    }
+  },
+  {
+    "query_id": "Q-412A3CE4D9",
+    "difficulty": "X",
+    "question": "what is the procedure for Novell NetWare print queue mapping",
+    "answerable": false,
+    "abstained": true,
+    "citations": 0,
+    "answer": "I could not find enough evidence in the IT knowledge base to answer that reliably, so I would rather not guess. You can rephrase the question, or I can raise a ticket so a human agent picks it up.",
+    "evidence_preview": [
+      "## Related Articles\n\n- Escalate to the Networking queue if the symptom persists after remediation.\n- Confirm the endpoint is enrolled before troubleshooting Acme DNS.\n- Check the active incident board; a platform-wide event will present identically.\n\n## Escalation\n\nIf the issue persists after these steps, raise a ticket with the Networking queue and attach the diagnostic bundle.",
+      "## Related Articles\n\n- Escalate to the Engineering queue if the symptom persists after remediation.\n- Confirm the endpoint is enrolled before troubleshooting Git.\n- Check the active incident board; a platform-wide event will present identically.\n\n## Escalation\n\nIf the issue persists after these steps, raise a ticket with the Engineering queue and attach the diagnostic bundle.",
+      "## Related Articles\n\n- Escalate to the Networking queue if the symptom persists after remediation.\n- Confirm the endpoint is enrolled before troubleshooting Corporate VPN.\n- Check the active incident board; a platform-wide event will present identically.\n\n## Escalation\n\nIf the issue persists after these steps, raise a ticket with the Networking queue and attach the diagnostic bundle."
+    ],
+    "judge": {
+      "faithfulness": null,
+      "answer_relevance": 1.0,
+      "context_precision": 0.0
+    }
+  },
+  {
+    "query_id": "Q-1D0E5E7472",
+    "difficulty": "X",
+    "question": "what is the procedure for Company car telematics unit pairing",
+    "answerable": false,
+    "abstained": true,
+    "citations": 0,
+    "answer": "I could not find enough evidence in the IT knowledge base to answer that reliably, so I would rather not guess. You can rephrase the question, or I can raise a ticket so a human agent picks it up.",
+    "evidence_preview": [
+      "## Symptoms\n\nNew joiners need a deterministic sequence of setup steps. Affected users typically observe this on Windows, macOS. Reported informally as: first day; new starter; getting started; what do I do.\n\n## Root Cause\n\nProvisioning is asynchronous, so ordering matters.\n\nThe relevant subsystems are: provisioning sequence, entitlement propagation, identity seed, asset assignment. When the condit",
+      "## Symptoms\n\nThe client repeatedly prompts for credentials after a recent directory password rotation. Affected users typically observe this on Windows, macOS. Reported informally as: keeps asking; password; over and over; won't accept; login loop.\n\n## Root Cause\n\nA stale Kerberos ticket cached in the credential vault is replayed before the new secret is read.\n\nThe relevant subsystems are: Kerbero",
+      "## Symptoms\n\nConnections from a corporate laptop time out before the handshake completes. Affected users typically observe this on Windows, macOS. Reported informally as: can't connect; times out; database; reporting; hangs.\n\n## Root Cause\n\nThe database subnet is reachable only through the split-tunnel route, which is absent when the VPN is in full-tunnel mode.\n\nThe relevant subsystems are: subnet"
+    ],
+    "judge": {
+      "faithfulness": null,
+      "answer_relevance": 1.0,
+      "context_precision": 0.0
+    }
+  },
+  {
+    "query_id": "Q-C7086AB436",
+    "difficulty": "S",
+    "question": "container tooling stopped working right after the operating system patched itself",
+    "answerable": true,
+    "abstained": true,
+    "citations": 0,
+    "answer": "I could not find enough evidence in the IT knowledge base to answer that reliably, so I would rather not guess. You can rephrase the question, or I can raise a ticket so a human agent picks it up.",
+    "evidence_preview": [
+      "# Authenticating to the Internal Container Registry\n\n## Summary\n\nImage pulls from the internal registry fail with an authorisation error. This document describes the supported remediation for Docker Desktop in the Engineering estate.\n\n## Background\n\nDocker Desktop is operated by the Engineering function and is in scope for all Acme Technologies staff using Windows, macOS endpoints. The behaviour d",
+      "# Authenticating to the Internal Container Registry on macOS\n\n## Applies To\n\nmacOS endpoints running Docker Desktop. This article does not apply to other operating systems; see the corresponding macOS-specific guidance only.\n\n## Symptoms\n\nImage pulls from the internal registry fail with an authorisation error. On macOS the condition additionally surfaces in the platform log with a credential helpe",
+      "# Authenticating to the Internal Container Registry on Windows\n\n## Applies To\n\nWindows endpoints running Docker Desktop. This article does not apply to other operating systems; see the corresponding Windows-specific guidance only.\n\n## Symptoms\n\nImage pulls from the internal registry fail with an authorisation error. On Windows the condition additionally surfaces in the platform log with a credenti"
+    ],
+    "judge": {
+      "faithfulness": null,
+      "answer_relevance": 0.0,
+      "context_precision": 1.0
+    }
+  }
+]

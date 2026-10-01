@@ -1,0 +1,173 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # CI must never reach a model provider. The deterministic fake provider makes
+  # the whole suite reproducible, free and offline (audit G14). A CI run that
+  # spends API budget is a CI run nobody will keep green.
+  OPSPILOT_LLM_BACKEND: fake
+  OPSPILOT_EMBEDDING_BACKEND: hashing
+  OPSPILOT_MCP_ENABLED: "false"
+  PYTHONIOENCODING: utf-8
+
+jobs:
+  lint:
+    name: Lint and format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install ruff==0.16.9
+      - name: ruff check
+        run: ruff check --output-format=github .
+      - name: ruff format --check
+        run: ruff format --check .
+
+  test:
+    name: Tests (py${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.12 is the supported floor (ONNX/embedding ecosystem); 3.13 guards
+        # against regressions as the toolchain moves. Local dev runs 3.14.
+        python: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Unit and integration tests
+        run: pytest -q --junitxml=junit-${{ matrix.python }}.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: junit-${{ matrix.python }}
+          path: junit-${{ matrix.python }}.xml
+
+  evaluation:
+    name: Offline evaluation (no API calls)
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+
+      # These four stages need no model access, so they run on every push and
+      # act as a regression gate on retrieval quality itself -- not just on
+      # whether the code imports.
+      - name: Build corpus, index and run retrieval experiments
+        run: python -m scripts.build_index
+      - name: Abstention calibration sweep
+        run: python scripts/calibrate_abstention.py
+      - name: Adversarial and authorization probes
+        run: python scripts/run_adversarial.py
+      - name: MCP layer checks
+        run: python scripts/test_mcp.py
+
+      - name: Assert retrieval has not regressed
+        run: python scripts/check_regressions.py
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evaluation-reports
+          path: artifacts/reports/
+
+  security:
+    name: Dependency and secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt pip-audit
+      - name: Known vulnerabilities in dependencies
+        run: pip-audit --strict || true   # advisory until the baseline is clean
+      - name: Fail if a committed file looks like a secret
+        run: python scripts/check_secrets.py
+
+  frontend:
+    name: Frontend build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install
+        working-directory: frontend
+        run: npm ci || npm install
+      - name: Type check
+        working-directory: frontend
+        run: npm run typecheck
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+
+  docker:
+    name: Docker build (not deployed)
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      # The development machine has no Docker, so these images have never been
+      # built locally. CI is the FIRST place they are built -- that is exactly
+      # why this job exists, and why the compose file is labelled unverified
+      # until this job has been green.
+      - name: Build backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/docker/backend.Dockerfile
+          push: false
+          tags: opspilot-backend:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Validate compose file
+        run: docker compose -f docker-compose.yml config --quiet
+        env:
+          POSTGRES_PASSWORD: ci-placeholder
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    # Never deploy from untested code (spec §33).
+    needs: [lint, test, evaluation, security, docker]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deployment is not configured yet
+        run: |
+          echo "All gates passed. No deployment target is configured."
+          echo "See docs/deployment/cloud.md for the intended procedure."
+          echo "This step is intentionally a no-op rather than a fake success."

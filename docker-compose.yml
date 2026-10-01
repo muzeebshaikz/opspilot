@@ -1,0 +1,70 @@
+# NOT RUN LOCALLY -- the development machine has no Docker or WSL2.
+# This file is the intended deployment topology, authored for review and CI.
+# Locally the same system runs with: Qdrant in embedded mode, SQLite, and an
+# in-process cache. See docs/architecture/TECHNOLOGY-RATIONALE.md.
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: opspilot
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: opspilot
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U opspilot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    volumes: [qdrantdata:/qdrant/storage]
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ':> /dev/tcp/127.0.0.1/6333'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: {context: ., dockerfile: infra/docker/backend.Dockerfile}
+    environment:
+      OPSPILOT_DATABASE_URL: postgresql+psycopg://opspilot:${POSTGRES_PASSWORD}@postgres:5432/opspilot
+      OPSPILOT_QDRANT_URL: http://qdrant:6333
+      OPSPILOT_REDIS_URL: redis://redis:6379/0
+      OPSPILOT_LLM_BACKEND: ${OPSPILOT_LLM_BACKEND:-fake}
+      OPSPILOT_GROQ_API_KEY: ${OPSPILOT_GROQ_API_KEY:-}
+      OPSPILOT_EMBEDDING_BACKEND: onnx
+    ports: ["8000:8000"]
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+      qdrant: {condition: service_healthy}
+
+  frontend:
+    build: {context: ., dockerfile: infra/docker/frontend.Dockerfile}
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:8000
+    ports: ["3000:3000"]
+    depends_on: [backend]
+
+  # MCP servers (spec §7 / V7). Not implemented yet -- deliberately.
+  # The service layer they must wrap exists (opspilot/tools.py); introducing MCP
+  # before that layer was proven would have inverted the spec's own ordering.
+  # mcp-ticketing: {build: {context: ., dockerfile: infra/docker/mcp.Dockerfile},
+  #                 command: ["python","-m","opspilot.mcp.ticketing"]}
+  # mcp-incident:  ...
+  # mcp-asset:     ...
+  # mcp-knowledge: ...
+
+volumes:
+  pgdata:
+  qdrantdata:

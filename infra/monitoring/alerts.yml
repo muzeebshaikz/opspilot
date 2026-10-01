@@ -1,0 +1,68 @@
+# Alert rules. The token-budget rules are the ones that matter operationally:
+# this deployment is quota-bound long before it is CPU-bound.
+groups:
+  - name: opspilot-availability
+    rules:
+      - alert: OpsPilotDown
+        expr: up{job="opspilot-backend"} == 0
+        for: 2m
+        labels: {severity: critical}
+        annotations:
+          summary: "OpsPilot backend is not being scraped"
+
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(opspilot_requests_total{status=~"5.."}[5m]))
+            / sum(rate(opspilot_requests_total[5m])) > 0.05
+        for: 5m
+        labels: {severity: warning}
+        annotations:
+          summary: "Over 5% of requests are failing"
+
+  - name: opspilot-quota
+    rules:
+      # At ~2,400 tokens per grounded answer, 20,000 tokens left is roughly
+      # eight more answers for the rest of the day.
+      - alert: DailyTokenBudgetLow
+        expr: opspilot_token_budget_remaining < 20000
+        for: 1m
+        labels: {severity: warning}
+        annotations:
+          summary: "Daily model token budget nearly exhausted"
+          description: "{{ $value }} tokens remain (~{{ div $value 2400 }} answers)."
+
+      - alert: DailyTokenBudgetExhausted
+        expr: opspilot_token_budget_remaining < 2500
+        for: 1m
+        labels: {severity: critical}
+        annotations:
+          summary: "Model budget exhausted -- retrieval-only answers remain available"
+
+  - name: opspilot-quality
+    rules:
+      # Quality alerts, not just liveness. A copilot that answers fast and
+      # wrongly is worse than one that is slow.
+      - alert: AbstentionRateHigh
+        expr: |
+          sum(rate(opspilot_answer_outcomes_total{outcome="abstained_no_evidence"}[30m]))
+            / sum(rate(opspilot_answer_outcomes_total[30m])) > 0.5
+        for: 15m
+        labels: {severity: warning}
+        annotations:
+          summary: "Over half of answers are abstentions -- retrieval may be degraded"
+
+      - alert: AuthorizationDenialSpike
+        expr: sum(rate(opspilot_authorization_total{decision="denied"}[10m])) > 1
+        for: 10m
+        labels: {severity: warning}
+        annotations:
+          summary: "Unusual rate of authorization denials -- possible probing"
+
+      - alert: SlowRetrieval
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(opspilot_retrieval_duration_seconds_bucket[10m])) by (le)) > 0.5
+        for: 10m
+        labels: {severity: warning}
+        annotations:
+          summary: "Retrieval p95 above 500ms"

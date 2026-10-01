@@ -1,0 +1,21 @@
+{
+  "_README": "Binary human labels for judge calibration. faithful: is every claim supported by the retrieved evidence? relevant: does the response address the question (a correct abstention on an unanswerable question IS relevant; an abstention on an answerable one is NOT). faithful is omitted where the system abstained, because an abstention makes no claims.",
+  "_annotator": "assistant (Claude) reading each answer against its evidence -- NOT an independent human annotator. This is a real methodological limitation: the labels and the system under test were produced by related processes, so agreement is optimistically biased. Re-label with an independent annotator before citing kappa externally.",
+  "_labelled_on": "2026-09-30",
+  "_source_cases": "evaluation/judged_cases.json",
+
+  "Q-D3AA58B08E": {"faithful": 1, "relevant": 1, "note": "AWS trust-policy steps match the source doc"},
+  "Q-22BDA5F48A": {"relevant": 0, "note": "password policy IS documented; false abstention"},
+  "Q-C60A6B2655": {"relevant": 0, "note": "laptop refresh policy IS documented; false abstention"},
+  "Q-E57217066C": {"faithful": 1, "relevant": 1, "note": "git lfs steps match source"},
+  "Q-F7C61BFD86": {"faithful": 1, "relevant": 1, "note": "Docker VM Platform steps match the Windows variant"},
+  "Q-18CAC629BD": {"relevant": 1, "note": "Oracle Forms genuinely undocumented; correct abstention"},
+  "Q-4EA3533F2B": {"relevant": 0, "note": "DNS article exists; false abstention"},
+  "Q-D3BE34DF0E": {"relevant": 0, "note": "multi-hop k8s; both docs exist; false abstention"},
+  "Q-4CA3024376": {"faithful": 1, "relevant": 1, "note": "M365 licence reclamation steps correct"},
+  "Q-BEC8EAADFE": {"faithful": 1, "relevant": 1, "note": "security incident steps match macOS variant"},
+  "Q-BEB072F79C": {"faithful": 1, "relevant": 1, "note": "JIT break-glass, 4h expiry correct"},
+  "Q-412A3CE4D9": {"relevant": 1, "note": "Novell undocumented; correct abstention"},
+  "Q-1D0E5E7472": {"relevant": 1, "note": "telematics undocumented; correct abstention"},
+  "Q-C7086AB436": {"relevant": 0, "note": "docker paraphrase; article exists; false abstention"}
+}
